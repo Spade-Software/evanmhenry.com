@@ -92,11 +92,14 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
   .project-row:hover, .book-row:hover, .project-row:hover .project-icon, .identity:hover .portrait { transform: none; }
 }
 
-.intro p a.inline-record { display: inline-flex; align-items: baseline; gap: 6px; padding: 0 2px; margin-inline: 0; border-radius: 4px; color: var(--text); font-size: inherit; line-height: inherit; vertical-align: baseline; white-space: nowrap; text-decoration: none; transition: background .2s; }
+.intro p a.inline-record { display: inline-flex; align-items: baseline; gap: 6px; padding: 0 2px; margin-inline: 0; border-radius: 0; color: #FFFFFF; font-size: inherit; line-height: inherit; vertical-align: baseline; white-space: nowrap; text-decoration: none; transition: none; }
 .record-icon { display: inline-flex; align-self: center; align-items: center; justify-content: center; width: 16px; height: 16px; flex-shrink: 0; }
-.record-icon img { object-fit: contain; }
-.record-label { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #ffffff35; text-underline-offset: 3px; }
-.intro p a.inline-record:hover { background: #ffffff0d; }
+.record-icon img { width: 14px; height: 14px; object-fit: contain; }
+.record-icon-entity { width: 18px; height: 18px; border: 1px solid rgb(255 255 255 / 7%); border-radius: 4px; overflow: hidden; }
+.record-icon-entity img { width: 100%; height: 100%; object-fit: cover; }
+.project-artwork img[src*="square"] { padding: 0; object-fit: cover; }
+.record-label { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #ffffff26; transition: text-decoration-color .12s; text-underline-offset: 3px; }
+.intro p a.inline-record:hover { background: transparent; }
 .inline-record:hover .record-label { text-decoration-color: #ffffff80; }
 .footer-socials { display: flex; flex-wrap: wrap; gap: 16px; }
 .footer-socials a { color: var(--muted); transition: color .18s; }
