@@ -4,6 +4,7 @@ import { Arrow } from './arrow'
 const socials = [
   { title: 'Instagram', handle: '@evanmhenry', description: 'Life beyond the screen.', url: 'https://www.instagram.com/evanmhenry/', image: '/images/instagram.svg' },
   { title: 'X / Twitter', handle: '@evanmhenry1', description: 'Thoughts along the way.', url: 'https://x.com/evanmhenry1', image: '/images/twitter.svg' },
+  { title: 'LinkedIn', handle: 'Evan Henry', description: 'Work and connections.', url: 'https://www.linkedin.com/in/evanmhenry/', image: '/images/linkedin.svg' },
   { title: 'GitHub', handle: 'evanmhenry', description: 'What I’m building.', url: 'https://github.com/evanmhenry', image: '/images/github.svg' },
 ]
 
