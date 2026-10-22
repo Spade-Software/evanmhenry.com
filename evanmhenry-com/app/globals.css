@@ -98,16 +98,7 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
 .record-label { text-decoration: underline; text-decoration-thickness: 1px; text-decoration-color: #ffffff35; text-underline-offset: 3px; }
 .intro p a.inline-record:hover { background: #ffffff0d; }
 .inline-record:hover .record-label { text-decoration-color: #ffffff80; }
-.social-section { margin-top: 96px; }
-.section-note { color: var(--muted); margin-bottom: 24px; }
-.social-links { border-top: 1px solid var(--border); }
-.social-link { display: flex; align-items: center; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border); }
-.social-link > img { opacity: .8; flex-shrink: 0; }
-.social-copy { display: flex; flex-direction: column; min-width: 128px; }
-.social-name { font-weight: 450; }
-.social-handle { font-size: 13px; color: var(--muted); }
-.social-description { flex: 1; color: var(--muted); font-size: 14px; }
-.social-link > .arrow { color: var(--muted); margin-left: auto; }
-.social-link:hover > .arrow { transform: translate(2px,-2px); color: var(--text); }
-.social-link:hover > img { opacity: 1; }
-@media (max-width: 600px) { .social-section { margin-top: 72px; } .social-description { display: none; } }
+.footer-socials { display: flex; flex-wrap: wrap; gap: 16px; }
+.footer-socials a { color: var(--muted); transition: color .18s; }
+.footer-socials a:hover { color: var(--text); }
+footer { margin-top: 96px; flex-wrap: wrap; row-gap: 16px; }
