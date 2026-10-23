@@ -1,0 +1,8 @@
+.analytics-consent{position:fixed;z-index:20;bottom:16px;left:16px;width:min(380px,calc(100vw - 32px));padding:20px;background:var(--background);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px #0004}
+.analytics-consent h2{font-size:15px;margin:0 0 8px}
+.analytics-consent p{font-size:14px;line-height:22px;color:var(--muted)}
+.analytics-privacy-link{display:inline-block;margin-top:8px;font-size:13px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.analytics-consent>div{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.analytics-consent button{min-height:44px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer}
+.analytics-settings{position:fixed;z-index:10;bottom:12px;left:20px;min-height:44px;padding:8px 0;border:0;background:var(--background);color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.analytics-consent button:focus-visible,.analytics-settings:focus-visible{outline:2px solid var(--text);outline-offset:4px}

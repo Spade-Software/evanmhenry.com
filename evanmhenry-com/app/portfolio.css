@@ -6,7 +6,7 @@
 .portfolio-intro .portfolio-headline{font-size:40px;line-height:1.1;letter-spacing:-.045em;font-weight:500;text-wrap:balance;margin:32px 0 24px}
 .portfolio-intro p{color:var(--muted)}
 .portfolio-intro p+p{margin-top:16px}
-.portfolio-intro .record-icon-entity{border:0;border-radius:6px}
+.portfolio-intro .record-icon-entity{border:0;border-radius:6px;margin-left:2px}
 .portfolio-intro p a.inline-record{padding:0;white-space:normal}
 .portfolio-intro .intro-socials{margin-top:32px}
 .portfolio-intro .footer-socials{gap:4px;margin-left:-12px}

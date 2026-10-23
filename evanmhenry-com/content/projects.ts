@@ -8,7 +8,7 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    title: 'Spade Software',
+    title: 'Spade',
     description: 'A studio building software for businesses and the people behind them.',
     url: 'https://spadehq.com',
     image: '/images/spade-square-light.webp',
