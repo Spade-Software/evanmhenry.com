@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: 'Analytics privacy', description: 'Ho
 export default function AnalyticsPrivacy() {
   return <main id="main" tabIndex={-1} className="container main-content">
     <Link className="back-link" href="/">← Back home</Link>
-    <header className="article-header"><h1 className="page-title">Analytics privacy</h1><p>Optional analytics on EvanMHenry.com.</p></header>
+    <header className="article-header"><h1 className="page-title">Analytics privacy</h1><p>Optional analytics on evanmhenry.com.</p></header>
     <div className="prose">
       <p>If you allow analytics, this site uses Google Analytics to understand visits, traffic sources, pages viewed, device and browser categories, approximate location, and interactions with project and social links. Google processes this information to provide analytics reports.</p>
       <h2>Your choice</h2>
