@@ -24,6 +24,10 @@ export function Analytics({ measurementId }: { measurementId: string }) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [initialized, setInitialized] = useState(false)
   const started = useRef(false)
+  const consentHeading = useRef<HTMLHeadingElement>(null)
+  const settingsButton = useRef<HTMLButtonElement>(null)
+  const focusConsentOnOpen = useRef(false)
+  const focusSettingsOnClose = useRef(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -125,22 +129,33 @@ export function Analytics({ measurementId }: { measurementId: string }) {
     }
   }, [initialized, consent, pathname])
 
+  useEffect(() => {
+    if (settingsOpen && focusConsentOnOpen.current) {
+      focusConsentOnOpen.current = false
+      consentHeading.current?.focus()
+    } else if (!settingsOpen && focusSettingsOnClose.current) {
+      focusSettingsOnClose.current = false
+      settingsButton.current?.focus()
+    }
+  }, [settingsOpen])
+
   function choose(next: AnalyticsConsent) {
     // Block Google's own automatic events synchronously on decline, before the next effect.
     ;(window as unknown as Record<string, unknown>)[`ga-disable-${measurementId}`] = next !== 'granted'
     try { localStorage.setItem(consentStorageKey, next) } catch { /* Keep the choice for this visit. */ }
     setConsent(next)
+    focusSettingsOnClose.current = true
     setSettingsOpen(false)
   }
 
   if (!eligible) return null
   return <>
     {initialized && consent === 'granted' && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
-    {settingsOpen ? <section className="analytics-consent" role="region" aria-labelledby="analytics-title">
-      <h2 id="analytics-title">Site analytics</h2>
-      <p>Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
+    {settingsOpen ? <section className="analytics-consent" aria-labelledby="analytics-title" aria-describedby="analytics-description">
+      <h2 id="analytics-title" ref={consentHeading} tabIndex={-1} aria-describedby="analytics-description">Site analytics</h2>
+      <p id="analytics-description">Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
       <Link className="analytics-privacy-link" href="/privacy/">Analytics privacy</Link>
       <div><button type="button" onClick={() => choose('denied')}>Decline</button><button type="button" onClick={() => choose('granted')}>Allow analytics</button></div>
-    </section> : <button className="analytics-settings" type="button" onClick={() => setSettingsOpen(true)}>Analytics settings</button>}
+    </section> : <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsOpen(true) }}>Analytics settings</button>}
   </>
 }
