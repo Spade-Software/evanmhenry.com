@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1024" gradientUnits="userSpaceOnUse"><stop stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E4E7"/></linearGradient>
+<linearGradient id="mk" x1="0" y1="0" x2="0" y2="250" gradientUnits="userSpaceOnUse"><stop stop-color="#3A3B3F"/><stop offset="1" stop-color="#0F1012"/></linearGradient>
+<filter id="sh" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB"><feDropShadow dx="0" dy="10" stdDeviation="15" flood-color="#0F1012" flood-opacity="0.18"/></filter>
+</defs>
+<rect width="1024" height="1024" fill="url(#bg)"/>
+<g transform="translate(256 256) scale(2.048)" filter="url(#sh)"><path fill-rule="evenodd" fill="url(#mk)" d="M167 0C235.351 0 250 14.65 250 83V167C250 235.351 235.351 250 167 250H83C14.65 250 0 235.351 0 167V83C0 14.65 14.65 0 83 0H167ZM104 62.5C69.825 62.5 62.5 69.825 62.5 104V146C62.5 180.175 69.825 187.5 104 187.5H146C180.175 187.5 187.5 180.175 187.5 146V104C187.5 69.825 180.175 62.5 146 62.5H104Z"/></g>
+</svg>
