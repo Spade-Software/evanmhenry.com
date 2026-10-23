@@ -1,0 +1,913 @@
+/* The app's index.css locks body scroll (the real shell scrolls inside); a prototype page scrolls itself. */
+body {
+  overflow-y: auto !important;
+}
+
+.proto-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.proto-picker,
+.proto-versions,
+.proto-panel {
+  background: rgba(10, 10, 10, 0.82);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 8px 24px rgba(0, 0, 0, 0.24),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  color: #fff;
+}
+
+.proto-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 100%;
+  padding: 4px;
+  border-radius: 999px;
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.proto-picker-highlight {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  will-change: transform;
+}
+
+/* The slide is enabled only after first paint (data-ready), so load doesn't animate. */
+.proto-picker[data-ready] .proto-picker-highlight {
+  transition:
+    transform 250ms cubic-bezier(0.23, 1, 0.32, 1),
+    width 250ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.proto-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.proto-picker-item {
+  position: relative; /* sits above the highlight */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease-out;
+}
+
+.proto-picker-item:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.proto-picker-item:active {
+  transform: scale(0.97);
+}
+
+.proto-dock button:focus-visible,
+.proto-dock textarea:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 2px;
+}
+
+.proto-picker-item[data-active] {
+  color: #fff;
+}
+
+.proto-picker-item:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.proto-picker-item svg {
+  width: 14px;
+  height: 14px;
+}
+
+.proto-picker-item[data-verdict="keep"]::after,
+.proto-picker-item[data-verdict="change"]::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+}
+
+.proto-picker-item[data-verdict="keep"]::after { background: #4ade80; }
+.proto-picker-item[data-verdict="change"]::after { background: #fbbf24; }
+
+.proto-picker-item[data-verdict="drop"] {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: line-through;
+}
+
+.proto-picker-verdict {
+  padding: 0 9px;
+}
+
+.proto-picker-verdict[data-verdict-btn="keep"][aria-pressed="true"] { color: #4ade80; background: rgba(74, 222, 128, 0.14); }
+.proto-picker-verdict[data-verdict-btn="change"][aria-pressed="true"] { color: #fbbf24; background: rgba(251, 191, 36, 0.14); }
+.proto-picker-verdict[data-verdict-btn="drop"][aria-pressed="true"] { color: #f87171; background: rgba(248, 113, 113, 0.14); }
+
+.proto-picker-divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.proto-picker-icon {
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.proto-picker-send {
+  background: #fff;
+  color: #0a0a0a;
+}
+
+.proto-picker-send:hover {
+  color: #0a0a0a;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.proto-picker-locked {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #4ade80;
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+
+.proto-picker-locked svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Hovering the lock-in offers to undo it: the check turns into an x. */
+.proto-picker-locked svg + svg,
+.proto-picker-locked:hover svg:first-child {
+  display: none;
+}
+
+.proto-picker-locked:hover svg + svg {
+  display: block;
+}
+
+.proto-picker-locked:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@keyframes proto-pulse {
+  50% { opacity: 0.3; }
+}
+
+.proto-versions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(10, 10, 10, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 4px 12px rgba(0, 0, 0, 0.16);
+  font-size: 12px;
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.proto-versions[hidden] {
+  display: none;
+}
+
+.proto-versions .proto-picker-item {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.proto-versions-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.proto-versions-count:hover,
+.proto-versions-count[aria-expanded="true"] {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.proto-versions-count span {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.proto-versions-count svg {
+  width: 12px;
+  height: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.proto-panel {
+  position: relative;
+  box-sizing: border-box;
+  width: min(380px, calc(100vw - 32px));
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(10, 10, 10, 0.9);
+  line-height: 1.4;
+  transform-origin: bottom center;
+  animation: proto-panel-in 140ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes proto-panel-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.97); }
+}
+
+.proto-panel-title {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.proto-panel-list {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.proto-panel-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.proto-panel-list li + li {
+  margin-top: 4px;
+}
+
+.proto-panel-list b {
+  color: #fff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.proto-tag {
+  flex-shrink: 0;
+  width: 52px;
+  font-size: 12px;
+}
+
+.proto-dock [data-verdict="keep"]:is(.proto-tag, b) { color: #4ade80; }
+.proto-dock [data-verdict="change"]:is(.proto-tag, b) { color: #fbbf24; }
+.proto-dock [data-verdict="drop"]:is(.proto-tag, b) { color: #f87171; }
+
+.proto-panel textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  max-height: 40vh;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+  line-height: 1.45;
+  resize: none;
+  overflow-y: auto;
+}
+
+.proto-panel textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.proto-panel-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.proto-panel-actions button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.proto-panel-actions button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.proto-panel-actions .proto-panel-primary {
+  background: #fff;
+  color: #0a0a0a;
+}
+
+.proto-panel-actions .proto-panel-primary:hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.proto-panel-hint {
+  margin-right: auto;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+.proto-panel-error {
+  margin: 8px 0 0;
+  color: #fca5a5;
+}
+
+.proto-card {
+  padding: 10px 12px;
+}
+
+/* Covers the gap to the pill so the pointer can travel into the card. */
+.proto-card[data-bridge]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 10px;
+}
+
+.proto-card-head {
+  margin: 0 0 4px;
+  font-size: 12px;
+}
+
+.proto-card-head b {
+  font-weight: 600;
+}
+
+.proto-card-text {
+  box-sizing: border-box;
+  display: block;
+  width: calc(100% + 8px);
+  margin: 0 -4px -2px;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  line-height: 1.45;
+  text-align: left;
+  white-space: pre-wrap;
+  cursor: text;
+}
+
+.proto-card-text:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Card padding is 10px 12px on a 14px radius; an 8px inset on every side makes the field 6px, concentric with the card. */
+.proto-panel .proto-card-input {
+  width: calc(100% + 8px);
+  min-height: 0;
+  margin: 0 -4px -2px;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+/* Note editors read as text: an amber caret and a faint lift while focused. */
+.proto-panel .proto-card-input,
+.proto-panel .proto-row-input {
+  background: transparent;
+  box-shadow: none;
+  caret-color: #fbbf24;
+  outline: none;
+  transition: background-color 150ms ease-out;
+}
+
+.proto-panel .proto-card-input:focus,
+.proto-panel .proto-row-input:focus {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* The direction box keeps a hairline field. */
+.proto-panel .proto-direction {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  outline: none;
+  transition: background-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+.proto-panel .proto-direction:focus {
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.proto-dock .proto-panel textarea:focus-visible {
+  outline: none;
+}
+
+.proto-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.proto-row {
+  position: relative;
+  padding-left: 12px;
+}
+
+.proto-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  border-radius: 2px;
+}
+
+.proto-row[data-verdict="keep"]::before { background: #4ade80; }
+.proto-row[data-verdict="change"]::before { background: #fbbf24; }
+.proto-row[data-verdict="drop"]::before { background: #f87171; }
+
+.proto-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.proto-row-head b {
+  color: #fff;
+  font-weight: 500;
+}
+
+.proto-dock .proto-struck {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+}
+
+.proto-row-version {
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 400;
+  font-size: 12px;
+}
+
+.proto-row-seg {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.proto-row:hover .proto-row-seg,
+.proto-row:focus-within .proto-row-seg {
+  opacity: 1;
+}
+
+.proto-row-seg button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 20px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+.proto-row-seg button:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.proto-row-seg button svg { width: 12px; height: 12px; }
+.proto-row-seg [data-row-verdict="keep"][aria-pressed="true"] { color: #4ade80; background: rgba(74, 222, 128, 0.14); }
+.proto-row-seg [data-row-verdict="change"][aria-pressed="true"] { color: #fbbf24; background: rgba(251, 191, 36, 0.14); }
+.proto-row-seg [data-row-verdict="drop"][aria-pressed="true"] { color: #f87171; background: rgba(248, 113, 113, 0.14); }
+
+.proto-row-note {
+  display: block;
+  width: calc(100% + 6px);
+  margin: 1px 0 0 -6px;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font: inherit;
+  line-height: 1.45;
+  text-align: left;
+  white-space: pre-wrap;
+  cursor: text;
+}
+
+.proto-row-note:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.proto-panel .proto-row-input {
+  width: calc(100% + 6px);
+  min-height: 26px;
+  margin: 2px 0 0 -6px;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+/* A row without a note grows an Add a note field while hovered. */
+.proto-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 200ms cubic-bezier(0.23, 1, 0.32, 1), opacity 150ms ease-out;
+}
+
+.proto-row:hover .proto-reveal,
+.proto-reveal:focus-within {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.proto-reveal > div {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.proto-row-add {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 4px 0 0;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+  font: inherit;
+  line-height: 1.45;
+  text-align: left;
+  cursor: text;
+}
+
+.proto-row-add:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* The building state: option placeholders in the pill, a quiet line on the stage. */
+.proto-skel {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  animation: proto-pulse 1.4s ease-in-out infinite;
+}
+
+.proto-ring {
+  position: relative;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+
+.proto-ring::after {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: 999px;
+  border: 1.5px solid transparent;
+  border-top-color: currentColor;
+  animation: proto-rotate 1s linear infinite;
+}
+
+@keyframes proto-rotate {
+  to { transform: rotate(360deg); }
+}
+
+.proto-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  min-height: 100vh;
+  padding-bottom: 160px;
+  box-sizing: border-box;
+  color: var(--color-muted-foreground, #737373);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+
+.proto-loading-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.proto-loading-sub {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.proto-loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #f59e0b;
+}
+
+.proto-loading-line b {
+  color: var(--color-foreground, #0a0a0a);
+  font-weight: 500;
+}
+
+.proto-loading button {
+  margin-top: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.proto-loading button:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  color: var(--color-foreground, #0a0a0a);
+}
+
+.proto-arrived {
+  animation: proto-arrive 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes proto-arrive {
+  from { opacity: 0; }
+}
+
+.proto-grid {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 2px;
+  width: auto;
+  padding: 6px;
+}
+
+.proto-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 150ms ease-out;
+}
+
+.proto-chip:hover { color: rgba(255, 255, 255, 0.85); }
+.proto-chip[data-active] { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
+.proto-chip .proto-ring {
+  width: 10px;
+  height: 10px;
+}
+
+.proto-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.proto-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.proto-dots [data-verdict="keep"] { background: #4ade80; }
+.proto-dots [data-verdict="change"] { background: #fbbf24; }
+.proto-dots [data-verdict="drop"] { background: #f87171; }
+
+.proto-context {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  padding: 4px 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.proto-context[data-level="mid"] { color: #fbbf24; }
+.proto-context[data-level="high"] { color: #f87171; }
+
+@media (prefers-reduced-motion: reduce) {
+  .proto-picker[data-ready] .proto-picker-highlight { transition: none; }
+  .proto-panel { animation: none; }
+  .proto-skel, .proto-ring::after, .proto-arrived { animation: none; }
+  .proto-reveal, .proto-row-seg { transition: none; }
+}
+
+.proto-versions-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  padding: 0 !important;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.proto-versions-all svg {
+  width: 14px;
+  height: 14px;
+}
+
+.proto-versions-all:hover:not(:disabled),
+.proto-versions-all[aria-pressed="true"] {
+  color: #fff;
+}
+
+.proto-versions-all[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.proto-all {
+  display: grid;
+  height: 100vh;
+  box-sizing: border-box;
+  animation: proto-arrive 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.proto-all-col {
+  position: relative;
+  min-width: 0;
+  overflow: auto;
+  box-shadow: -1px 0 0 rgba(127, 127, 127, 0.25);
+  cursor: default;
+}
+
+.proto-all-label {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  background: rgba(10, 10, 10, 0.82);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font: 500 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+.proto-all-label:hover,
+.proto-all-label[data-active] {
+  color: #fff;
+}
+
+.proto-all-label[data-active] {
+  box-shadow: inset 0 -2px 0 #fff;
+}
+
+.proto-all-label kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.55);
+  font: inherit;
+  font-size: 11px;
+}
+
+.proto-all-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.proto-all-label[data-verdict="drop"] .proto-all-name {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.proto-all-version {
+  color: rgba(255, 255, 255, 0.4);
+  font-variant-numeric: tabular-nums;
+}
+
+.proto-all-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.proto-all-verdict i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+}
+
+.proto-all-label[data-verdict="keep"] i { background: #4ade80; }
+.proto-all-label[data-verdict="change"] i { background: #fbbf24; }
+.proto-all-label[data-verdict="drop"] i { background: #f87171; }
+
+@media (prefers-reduced-motion: reduce) {
+  .proto-all { animation: none; }
+}
+
+/* Theme toggle and the standard edge-case menu, inline in the version bar */
+.proto-versions { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 32px); }
+.proto-theme { display: inline-flex; align-items: center; justify-content: center; width: 26px; padding: 0 !important; color: rgba(255, 255, 255, 0.6); }
+.proto-theme:hover { color: #fff; }
+.proto-theme svg { width: 14px; height: 14px; }
+.proto-case { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 6px 0 8px; border-radius: 999px; color: rgba(255, 255, 255, 0.6); font-size: 13px; cursor: pointer; }
+.proto-case:hover, .proto-case:focus-within { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.proto-case-label { color: rgba(255, 255, 255, 0.4); }
+.proto-case select { appearance: none; -webkit-appearance: none; background: transparent; border: 0; color: inherit; font: inherit; padding: 0 14px 0 0; margin-right: -14px; cursor: pointer; outline: none; field-sizing: content; }
+.proto-case select option { color: #111; }
+.proto-case svg { width: 12px; height: 12px; pointer-events: none; }
+.proto-case:focus-within { outline: 2px solid rgba(255, 255, 255, 0.4); outline-offset: 2px; }
+#stage.proto-narrow { max-width: 320px; margin: 0 auto; overflow: hidden; box-shadow: 0 0 0 1px rgba(127, 127, 127, 0.4); }

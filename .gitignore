@@ -1,0 +1,7 @@
+# Prototype runtime/host configuration belongs in external scratch space.
+**/.codex-connection.json
+**/.runtime.json
+**/feedback.jsonl
+**/.queued
+**/.consumed
+.DS_Store
