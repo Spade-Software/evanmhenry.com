@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { PortfolioFrame } from '@/components/portfolio-frame'
 import { ProjectGallery } from '@/components/project-gallery'
@@ -16,7 +17,7 @@ export default function Home() {
     <h2 className="portfolio-headline">{'What I’m building.'.split(' ').map((word, index) => <span key={word}>{index > 0 && ' '}<span className="platform-enter platform-word" style={delay(index * 68)}>{word}</span></span>)}</h2>
     <p className="platform-enter" style={delay(340)}>I build software at <InlineLink href="https://spadehq.com" image="/images/spade-square-light.webp">Spade</InlineLink>. I like design, creating things, and figuring out how they work.</p>
     <p className="platform-enter" style={delay(425)}>Outside work: jiu-jitsu, MMA, lifting, health and fitness.</p>
-    <div className="intro-socials platform-enter" style={delay(510)}><SocialLinks /></div>
+    <div className="intro-socials platform-enter" style={delay(510)}><SocialLinks /><Link className="privacy-link" href="/privacy/">Privacy</Link></div>
   </>}>
     <ProjectGallery />
   </PortfolioFrame>

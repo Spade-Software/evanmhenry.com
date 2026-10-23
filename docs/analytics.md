@@ -2,7 +2,7 @@
 
 The GA4 property and private reports are configured for **EvanMHenry.com**. Stream ID: `G-PDJXZKXXJM`. GitHub Actions variable `GA_MEASUREMENT_ID` stores this public identifier. No GA API key, service account, or analytics database is needed.
 
-Production builds receive `NEXT_PUBLIC_GA_MEASUREMENT_ID`. Collection also requires the exact host `evanmhenry.com` or `www.evanmhenry.com` and an explicit visitor consent grant. Localhost, PR exports and Azure previews do not track. Decline loads no Google tag. Analytics settings can reopen the choice; withdrawal disables Google tracking immediately, cancels project tracking and clears matching GA cookies. Consent is saved in local storage, or in memory when storage is blocked. Advertising storage, user-data consent, personalization and Google Signals stay disabled.
+Production builds receive `NEXT_PUBLIC_GA_MEASUREMENT_ID`. Collection also requires the exact host `evanmhenry.com` or `www.evanmhenry.com` and an explicit visitor consent grant. Localhost, PR exports and Azure previews do not track. Decline loads no Google tag. Analytics settings at the bottom of the privacy page can reopen the choice; withdrawal disables Google tracking immediately, cancels project tracking and clears matching GA cookies. Consent is saved in local storage, or in memory when storage is blocked. Advertising storage, user-data consent, personalization and Google Signals stay disabled.
 
 | Event | Meaning |
 | --- | --- |
