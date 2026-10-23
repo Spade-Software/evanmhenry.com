@@ -15,6 +15,7 @@ The source audit recorded no confirmed vulnerabilities. This follow-up addresses
 - Confirm the Azure custom domain and TLS attachment before considering HSTS. No `includeSubDomains` or preload commitment is added without confirming DNS and ownership for every subdomain.
 - Review Azure deployment-token authority and hosted workflow approval policy in their control planes. Token scope cannot be established from source inspection.
 - Read-only GitHub API checks on October 23, 2026 confirmed secret scanning, validity checks, non-provider patterns, and push protection are enabled. Dependabot security updates are disabled. Main-branch protection exists but has no required status checks and requires zero approving reviews; administrators are not enforced. These existing repository policies were recorded without changing the owner's merge workflow.
+- GitHub still lists 69 open Dependabot alerts referring to the previous Vite manifest and removed `yarn.lock`. Current `main` uses Next and `package-lock.json`, has no Vite dependency or tracked Yarn lockfile, and the local npm audit reports zero advisories. The stale alert state was recorded without dismissing alerts; it needs reconciliation with GitHub's dependency graph.
 - A restrictive script CSP remains open hardening work. The site uses generated Next inline bootstrap and optional Google Analytics; a policy must be developed against the exported output and verified against analytics behavior before enforcing `script-src` or `connect-src` restrictions.
 
 ## Verification limits
