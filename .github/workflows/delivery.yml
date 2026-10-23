@@ -10,6 +10,9 @@ on:
 permissions:
   contents: read
 
+env:
+  NEXT_TELEMETRY_DISABLED: '1'
+
 concurrency:
   group: delivery-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -35,6 +38,11 @@ jobs:
       - run: npm ci
       - run: npm audit --audit-level=high
       - run: npm test
+      - name: Check production analytics configuration
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GA_ID: ${{ vars.GA_MEASUREMENT_ID }}
+        run: node -e "if (!/^G-[A-Z0-9]+$/.test(process.env.GA_ID ?? '')) throw new Error('Configure the GA_MEASUREMENT_ID Actions variable before production delivery')"
       - name: Build static site
         run: npm run build
         env:
