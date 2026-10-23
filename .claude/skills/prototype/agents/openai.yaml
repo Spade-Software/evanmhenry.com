@@ -1,0 +1,5 @@
+interface:
+  display_name: Portfolio prototype
+  short_description: Explore immutable portfolio design variants from BackOps
+policy:
+  allow_implicit_invocation: false
