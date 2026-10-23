@@ -94,7 +94,7 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
     {initialized && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
     {settingsOpen ? <section className="analytics-consent" aria-label="Site analytics" aria-describedby="analytics-description">
       <p id="analytics-description" ref={consentSummary} tabIndex={-1}>
-        We use cookies.{' '}
+        I use cookies.{' '}
         <Link className="analytics-privacy-link" href="/privacy/">Read more</Link>
       </p>
       <div className="analytics-consent-actions">
