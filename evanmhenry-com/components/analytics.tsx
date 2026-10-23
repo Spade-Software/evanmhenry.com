@@ -94,9 +94,12 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
     {initialized && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
     {settingsOpen ? <section className="analytics-consent" aria-labelledby="analytics-title" aria-describedby="analytics-description">
       <h2 id="analytics-title" ref={consentHeading} tabIndex={-1} aria-describedby="analytics-description">Site analytics</h2>
-      <p id="analytics-description">Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
-      <Link className="analytics-privacy-link" href="/privacy/">Analytics privacy</Link>
-      <div><button type="button" onClick={() => choose('denied')}>Decline</button><button type="button" onClick={() => choose('granted')}>Allow analytics</button></div>
+      <p id="analytics-description">Allow Google Analytics to measure visits and project clicks?</p>
+      <div className="analytics-consent-actions">
+        <Link className="analytics-privacy-link" href="/privacy/">Privacy</Link>
+        <button type="button" onClick={() => choose('denied')}>Decline</button>
+        <button type="button" onClick={() => choose('granted')}>Allow analytics</button>
+      </div>
     </section> : <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsRequested(true) }}>Analytics settings</button>}
   </>
 }
