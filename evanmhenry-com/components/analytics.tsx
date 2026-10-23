@@ -33,7 +33,7 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
     useCallback(() => isAnalyticsSdkReady(measurementId), [measurementId]), () => false,
   )
   const [settingsRequested, setSettingsRequested] = useState(false)
-  const consentHeading = useRef<HTMLHeadingElement>(null)
+  const consentSummary = useRef<HTMLParagraphElement>(null)
   const settingsButton = useRef<HTMLButtonElement>(null)
   const focusConsentOnOpen = useRef(false)
   const focusSettingsOnClose = useRef(false)
@@ -73,7 +73,7 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
   useEffect(() => {
     if (settingsOpen && focusConsentOnOpen.current) {
       focusConsentOnOpen.current = false
-      consentHeading.current?.focus()
+      consentSummary.current?.focus()
     } else if (!settingsOpen && focusSettingsOnClose.current) {
       focusSettingsOnClose.current = false
       settingsButton.current?.focus()
@@ -92,11 +92,15 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
   if (!eligible) return null
   return <>
     {initialized && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
-    {settingsOpen ? <section className="analytics-consent" aria-labelledby="analytics-title" aria-describedby="analytics-description">
-      <h2 id="analytics-title" ref={consentHeading} tabIndex={-1} aria-describedby="analytics-description">Site analytics</h2>
-      <p id="analytics-description">Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
-      <Link className="analytics-privacy-link" href="/privacy/">Analytics privacy</Link>
-      <div><button type="button" onClick={() => choose('denied')}>Decline</button><button type="button" onClick={() => choose('granted')}>Allow analytics</button></div>
+    {settingsOpen ? <section className="analytics-consent" aria-label="Site analytics" aria-describedby="analytics-description">
+      <p id="analytics-description" ref={consentSummary} tabIndex={-1}>
+        I use cookies.{' '}
+        <Link className="analytics-privacy-link" href="/privacy/">Read more</Link>
+      </p>
+      <div className="analytics-consent-actions">
+        <button className="analytics-accept" type="button" onClick={() => choose('granted')}>Accept</button>
+        <button className="analytics-deny" type="button" onClick={() => choose('denied')}>Deny</button>
+      </div>
     </section> : <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsRequested(true) }}>Analytics settings</button>}
   </>
 }
