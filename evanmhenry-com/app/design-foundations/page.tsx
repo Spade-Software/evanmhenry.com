@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'Design foundations' }
 
 export default function DesignFoundations() {
-  return <main id="main" className="container main-content foundation-page"><Link className="back-link" href="/">← Evan Henry</Link>
+  return <main id="main" tabIndex={-1} className="container main-content foundation-page"><Link className="back-link" href="/">← Evan Henry</Link>
     <header className="article-header"><h1 className="page-title">Design foundations</h1><p>The type, spacing, color, and motion behind this site.</p></header>
     <div className="prose"><h2>Type</h2><p>Inter. A simple scale: 14, 16, 20, 32, and 40 pixels.</p>
       <h2>Color</h2><p>Near-black surfaces, white text, muted supporting copy. Color comes from the work.</p>

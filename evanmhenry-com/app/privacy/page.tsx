@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'Analytics privacy', description: 'How optional Google Analytics works on EvanMHenry.com.' }
 
 export default function AnalyticsPrivacy() {
-  return <main id="main" className="container main-content">
+  return <main id="main" tabIndex={-1} className="container main-content">
     <Link className="back-link" href="/">← Back home</Link>
     <header className="article-header"><h1 className="page-title">Analytics privacy</h1><p>Optional analytics on EvanMHenry.com.</p></header>
     <div className="prose">
@@ -16,7 +16,7 @@ export default function AnalyticsPrivacy() {
       <h2>Advertising</h2>
       <p>This integration disables Google Signals and advertising personalization signals, and keeps advertising-storage and advertising-data consent denied.</p>
       <h2>Google and external sites</h2>
-      <p>Read <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">how Google uses information from sites that use its services</a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google’s Privacy Policy</a>. Links to projects and social platforms take you to other websites with their own privacy practices.</p>
+      <p>Read <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">how Google uses information from sites that use its services<span className="visually-hidden"> (opens in a new tab)</span></a> and <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google’s Privacy Policy<span className="visually-hidden"> (opens in a new tab)</span></a>. Links to projects and social platforms take you to other websites with their own privacy practices.</p>
     </div>
   </main>
 }

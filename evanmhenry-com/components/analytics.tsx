@@ -2,9 +2,9 @@
 
 import Script from 'next/script'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { analyticsAllowed, consentStorageKey, readAnalyticsConsent, type AnalyticsConsent } from '@/lib/analytics'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { analyticsAllowed, configureAnalyticsSdk, consentStorageKey, getAnalyticsConsent, isAnalyticsSdkReady, publishAnalyticsConsentChange, startProjectTracking, subscribeAnalyticsConsent, subscribeAnalyticsSdk, type AnalyticsConsent } from '@/lib/analytics'
 import './analytics.css'
 
 type GoogleTag = (...args: unknown[]) => void
@@ -17,30 +17,28 @@ declare global {
 }
 
 const deniedAds = { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' }
-
 export function Analytics({ measurementId }: { measurementId: string }) {
-  const [eligible, setEligible] = useState(false)
-  const [consent, setConsent] = useState<AnalyticsConsent | null>(null)
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [initialized, setInitialized] = useState(false)
-  const started = useRef(false)
-  const pathname = usePathname()
+  return <AnalyticsInstance key={measurementId} measurementId={measurementId} />
+}
 
-  useEffect(() => {
-    if (!analyticsAllowed(measurementId, location.hostname, process.env.NODE_ENV === 'production')) return
-    setEligible(true)
-    const saved = readAnalyticsConsent(() => localStorage)
-    setConsent(saved)
-    setSettingsOpen(saved === null)
-    const sync = (event: StorageEvent) => {
-      if (event.key !== consentStorageKey && event.key !== null) return
-      const next = readAnalyticsConsent(() => localStorage)
-      setConsent(next)
-      setSettingsOpen(next === null)
-    }
-    window.addEventListener('storage', sync)
-    return () => window.removeEventListener('storage', sync)
-  }, [measurementId])
+function AnalyticsInstance({ measurementId }: { measurementId: string }) {
+  const pathname = usePathname()
+  const isEligible = useCallback(() => analyticsAllowed(measurementId, window.location.hostname, process.env.NODE_ENV === 'production'), [measurementId])
+  const eligible = useSyncExternalStore(() => () => {}, isEligible, () => false)
+  const subscribeConsent = useCallback((onChange: () => void) => subscribeAnalyticsConsent(onChange, measurementId), [measurementId])
+  const consent = useSyncExternalStore(subscribeConsent,
+    getAnalyticsConsent, () => null)
+  const sdkReady = useSyncExternalStore(
+    useCallback((onChange: () => void) => subscribeAnalyticsSdk(measurementId, onChange), [measurementId]),
+    useCallback(() => isAnalyticsSdkReady(measurementId), [measurementId]), () => false,
+  )
+  const [settingsRequested, setSettingsRequested] = useState(false)
+  const consentHeading = useRef<HTMLHeadingElement>(null)
+  const settingsButton = useRef<HTMLButtonElement>(null)
+  const focusConsentOnOpen = useRef(false)
+  const focusSettingsOnClose = useRef(false)
+  const settingsOpen = consent === null || settingsRequested
+  const initialized = eligible && consent === 'granted' && sdkReady
 
   useEffect(() => {
     if (!eligible) return
@@ -49,7 +47,6 @@ export function Analytics({ measurementId }: { measurementId: string }) {
     flags[`ga-disable-${measurementId}`] = consent !== 'granted'
     if (consent !== 'granted') {
       window.gtag?.('consent', 'update', { ...deniedAds, analytics_storage: 'denied' })
-      setInitialized(false)
       for (const cookie of document.cookie.split(';')) {
         const name = cookie.trim().split('=')[0]
         if (!/^_ga(?:_|$)/.test(name)) continue
@@ -61,86 +58,45 @@ export function Analytics({ measurementId }: { measurementId: string }) {
     }
     window.dataLayer ??= []
     window.gtag ??= function () { window.dataLayer!.push(arguments) }
-    if (!started.current) {
-      window.gtag('consent', 'default', { ...deniedAds, analytics_storage: 'denied' })
-      window.gtag('consent', 'update', { ...deniedAds, analytics_storage: 'granted' })
-      window.gtag('js', new Date())
-      window.gtag('config', measurementId, {
-        allow_google_signals: false,
-        allow_ad_personalization_signals: false,
-      })
-      started.current = true
-    } else {
-      window.gtag('consent', 'update', { ...deniedAds, analytics_storage: 'granted' })
-    }
-    setInitialized(true)
+    configureAnalyticsSdk(measurementId, window.gtag)
   }, [eligible, consent, measurementId])
 
   useEffect(() => {
-    if (!initialized || consent !== 'granted') return
-    const click = (event: MouseEvent) => {
-      const link = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[data-analytics-event]') : null
-      if (!link) return
-      const name = link.dataset.analyticsEvent
-      if (name !== 'project_click' && name !== 'social_click') return
-      window.gtag?.('event', name, {
-        link_name: link.dataset.analyticsName,
-        placement: link.dataset.analyticsPlacement,
-        destination_host: new URL(link.href).hostname,
-      })
-    }
-    document.addEventListener('click', click, true)
-    const viewed = new Set<Element>()
-    const timers = new Map<Element, ReturnType<typeof setTimeout>>()
-    const clear = (element: Element) => {
-      const timer = timers.get(element)
-      if (timer) clearTimeout(timer)
-      timers.delete(element)
-    }
-    // Viewport observation includes clipping by the independently scrolling project rail.
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-      if (!entry.isIntersecting || entry.intersectionRatio < .5 || document.hidden) return clear(entry.target)
-      if (viewed.has(entry.target) || timers.has(entry.target)) return
-      timers.set(entry.target, setTimeout(() => {
-        if (!document.hidden) {
-          window.gtag?.('event', 'project_view', { project_name: (entry.target as HTMLElement).dataset.project })
-          viewed.add(entry.target)
-          observer.unobserve(entry.target)
-        }
-        timers.delete(entry.target)
-      }, 1000))
-    }), { threshold: [0, .5] })
-    const projects = [...document.querySelectorAll<HTMLElement>('[data-project]')]
-    const visibility = () => {
-      timers.forEach((_, element) => clear(element))
-      projects.forEach(element => { observer.unobserve(element); if (!viewed.has(element)) observer.observe(element) })
-    }
-    projects.forEach(element => observer.observe(element))
-    document.addEventListener('visibilitychange', visibility)
-    return () => {
-      observer.disconnect()
-      timers.forEach(clearTimeout)
-      document.removeEventListener('click', click, true)
-      document.removeEventListener('visibilitychange', visibility)
-    }
+    if (!initialized) return
+    const stopTracking = startProjectTracking(
+      (...args) => window.gtag?.(...args),
+      () => getAnalyticsConsent() === 'granted',
+    )
+    return () => stopTracking()
   }, [initialized, consent, pathname])
 
+  useEffect(() => {
+    if (settingsOpen && focusConsentOnOpen.current) {
+      focusConsentOnOpen.current = false
+      consentHeading.current?.focus()
+    } else if (!settingsOpen && focusSettingsOnClose.current) {
+      focusSettingsOnClose.current = false
+      settingsButton.current?.focus()
+    }
+  }, [settingsOpen])
+
   function choose(next: AnalyticsConsent) {
-    // Block Google's own automatic events synchronously on decline, before the next effect.
+    // Flip Google's disable flag before publishing consent so outstanding callbacks see the new choice.
     ;(window as unknown as Record<string, unknown>)[`ga-disable-${measurementId}`] = next !== 'granted'
     try { localStorage.setItem(consentStorageKey, next) } catch { /* Keep the choice for this visit. */ }
-    setConsent(next)
-    setSettingsOpen(false)
+    publishAnalyticsConsentChange(next)
+    focusSettingsOnClose.current = true
+    setSettingsRequested(false)
   }
 
   if (!eligible) return null
   return <>
-    {initialized && consent === 'granted' && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
-    {settingsOpen ? <section className="analytics-consent" role="region" aria-labelledby="analytics-title">
-      <h2 id="analytics-title">Site analytics</h2>
-      <p>Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
+    {initialized && <Script id="google-analytics" src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />}
+    {settingsOpen ? <section className="analytics-consent" aria-labelledby="analytics-title" aria-describedby="analytics-description">
+      <h2 id="analytics-title" ref={consentHeading} tabIndex={-1} aria-describedby="analytics-description">Site analytics</h2>
+      <p id="analytics-description">Allow Google Analytics to measure page visits and project clicks? Your choice is saved on this device.</p>
       <Link className="analytics-privacy-link" href="/privacy/">Analytics privacy</Link>
       <div><button type="button" onClick={() => choose('denied')}>Decline</button><button type="button" onClick={() => choose('granted')}>Allow analytics</button></div>
-    </section> : <button className="analytics-settings" type="button" onClick={() => setSettingsOpen(true)}>Analytics settings</button>}
+    </section> : <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsRequested(true) }}>Analytics settings</button>}
   </>
 }

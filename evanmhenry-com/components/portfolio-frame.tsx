@@ -31,7 +31,7 @@ export function PortfolioFrame({ intro, children }: { intro: ReactNode; children
       scroll.removeEventListener('load', edges, true)
     }
   }, [])
-  return <main id="main" ref={root} className="portfolio-page"><div className="portfolio-layout">
+  return <main id="main" tabIndex={-1} ref={root} className="portfolio-page"><div className="portfolio-layout">
     <aside className="portfolio-intro intro">{intro}</aside>
     <section ref={scroller} className="portfolio-work" aria-label="Selected projects" tabIndex={0}>{children}</section>
   </div></main>
