@@ -4,7 +4,7 @@
 .analytics-privacy-link{text-decoration:underline;text-decoration-color:#fafafa80;text-underline-offset:4px;border-radius:2px}
 .analytics-privacy-link:hover{text-decoration-color:#fafafa}
 .analytics-consent-actions{display:flex;flex-shrink:0;gap:8px}
-.analytics-consent button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:0;border-radius:999px;font-size:14px;line-height:20px;font-weight:600;letter-spacing:.2px;cursor:pointer}
+.analytics-consent button{display:inline-flex;align-items:center;justify-content:center;height:36px;min-height:36px;padding:0 12px;border:0;border-radius:999px;font-size:14px;line-height:20px;font-weight:600;letter-spacing:.2px;cursor:pointer}
 .analytics-accept{background:#fafafa;color:#18181b}
 .analytics-accept:hover{background:#fafafad9}
 .analytics-deny{background:transparent;color:#fafafa;box-shadow:inset 0 0 0 1px #fafafa1a}
