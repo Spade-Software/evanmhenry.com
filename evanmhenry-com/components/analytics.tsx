@@ -76,7 +76,8 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
       consentSummary.current?.focus()
     } else if (!settingsOpen && focusSettingsOnClose.current) {
       focusSettingsOnClose.current = false
-      settingsButton.current?.focus()
+      const target = settingsButton.current ?? document.querySelector<HTMLElement>('#main')
+      target?.focus({ preventScroll: true })
     }
   }, [settingsOpen])
 
@@ -101,6 +102,8 @@ function AnalyticsInstance({ measurementId }: { measurementId: string }) {
         <button className="analytics-accept" type="button" onClick={() => choose('granted')}>Accept</button>
         <button className="analytics-deny" type="button" onClick={() => choose('denied')}>Deny</button>
       </div>
-    </section> : <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsRequested(true) }}>Analytics settings</button>}
+    </section> : pathname.replace(/\/$/, '') === '/privacy' && <section id="analytics-preferences" className="container analytics-preferences" aria-label="Analytics preferences">
+      <button ref={settingsButton} className="analytics-settings" type="button" onClick={() => { focusConsentOnOpen.current = true; setSettingsRequested(true) }}>Analytics settings</button>
+    </section>}
   </>
 }

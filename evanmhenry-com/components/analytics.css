@@ -10,7 +10,8 @@
 .analytics-deny{background:transparent;color:#fafafa;box-shadow:inset 0 0 0 1px #fafafa1a}
 .analytics-deny:hover{background:#fafafa1a}
 .analytics-consent button:focus-visible,.analytics-consent p:focus-visible,.analytics-privacy-link:focus-visible{outline:2px solid #fafafa;outline-offset:4px}
-.analytics-settings{position:fixed;z-index:10;bottom:max(12px,env(safe-area-inset-bottom));left:20px;min-height:44px;padding:8px 0;border:0;background:var(--background);color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.analytics-preferences{padding-bottom:64px}
+.analytics-settings{min-height:44px;padding:8px 0;border:0;background:var(--background);color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .analytics-settings:focus-visible{outline:2px solid var(--text);outline-offset:4px}
 @keyframes analytics-enter{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
 @media(prefers-reduced-motion:no-preference){.analytics-consent{animation:analytics-enter 200ms ease-out}}

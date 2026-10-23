@@ -1,5 +1,5 @@
 .portfolio-page{--surface:#191919;--ease-enter:cubic-bezier(.25,.46,.45,.94);height:100svh;overflow:hidden;padding:0 32px}
-.portfolio-layout{max-width:1200px;margin:auto;height:100%;display:grid;grid-template-columns:400px minmax(0,1fr);gap:48px}
+.portfolio-layout{min-height:0;grid-template-rows:minmax(0,1fr);max-width:1200px;margin:auto;height:100%;display:grid;grid-template-columns:400px minmax(0,1fr);gap:48px}
 .portfolio-intro{max-height:100%;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:48px 4px 48px 0;align-self:start}
 .portfolio-intro .portrait{box-shadow:none;transition:none;transform:none}
 .portfolio-intro .role{font-size:14px;line-height:22px}
@@ -66,3 +66,7 @@
 .project-gallery{gap:40px}
 }
 @media(prefers-reduced-motion:reduce){.signature-trigger path{stroke-dashoffset:0!important}}
+
+.portfolio-intro .privacy-link{display:inline-flex;align-items:center;min-height:44px;color:var(--muted);font-size:12px;text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:4px}
+.portfolio-intro .privacy-link:hover{text-decoration-color:var(--text)}
+@media(min-width:825px){html:has(.portfolio-page),body:has(.portfolio-page){height:100%;overflow:hidden}}
