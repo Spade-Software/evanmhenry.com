@@ -1,8 +1,8 @@
 # Evan M. Henry
 
-Personal work, writing, and projects at [evanmhenry.com](https://evanmhenry.com). Next.js exports static HTML; Azure Static Web Apps serves it. There is no application server or database.
+Personal work, writing and projects at [evanmhenry.com](https://evanmhenry.com). Next.js exports a static site hosted on Azure Static Web Apps. There is no application server, database or CMS.
 
-## Local work
+## Local development
 
 Use Node 22 (`nvm use`) and npm:
 
@@ -12,32 +12,32 @@ npm ci
 npm run dev
 ```
 
-Before a PR, run `npm test`, `npm run build`, then `npm run test:export` in the app. The build also checks TypeScript. `npm run preview` serves `out/`. Keep `package-lock.json` committed; use `npm ci` for reproducible installs. Never commit environment files or deployment credentials.
+Before a PR, run `npm test`, `npm run build`, then `npm run test:export`. The build also checks TypeScript; `npm run preview` serves `out/`. Commit `package-lock.json`, never credentials or local environment files.
 
 ## Content
 
 - Introduction: `evanmhenry-com/app/page.tsx`.
-- Projects: `evanmhenry-com/content/projects.ts`; images: `public/images/`.
-- Book summaries: `content/books.ts`; preserve their numeric URLs.
-- Writing: add static routes under `app/`, with a title, description, and stable URL. Keep content in Git. Add an index when there is actual writing to publish; there is currently no notes feed.
-- Shared appearance: `app/globals.css`, `app/portfolio.css`, and `components/`.
+- Projects: `content/projects.ts`; local images: `public/images/`.
+- Book summaries: `content/books.ts`; keep existing numeric URLs.
+- Articles and case studies: add static routes under `app/` with stable URLs, titles and descriptions. Add an index when there is actual writing to publish.
+- Appearance: `app/globals.css`, `app/portfolio.css`, and `components/`.
 
-The site stays dark, uses local fonts/images, and respects reduced motion. See [content and design conventions](docs/content-and-design.md).
+See [AGENTS.md](AGENTS.md) for the concise copy/design conventions.
 
-## Delivery
+## Publish and recover
 
-Branch from current `main`, make a small change, and open a PR. `Validate site` runs tests, a dependency audit, the production build, and static-route checks. PR builds receive no analytics ID or Azure deployment credentials. Download the `portfolio-site` artifact from Actions to inspect a PR export locally. Automatic Azure PR previews are disabled to avoid limited staging slots and exposing deployment authority to PR code.
+Open a small PR from current main. The single **Validate site** job installs dependencies, checks known vulnerabilities, runs analytics tests, builds the site and checks exported links. Main pushes run the same checks, upload that output to Azure, then check that the homepage responds. PRs do not deploy or load analytics. No build archives or per-edit GitHub Releases are maintained.
 
-Squash-merge a green PR. GitHub deletes its head branch automatically. A `main` push builds once, stores the tested export for 90 days, deploys that artifact, verifies the live commit/routes/security headers, and records a GitHub Release. Production deployments are serialized. No release branch or manually edited version number is needed.
+Squash-merge a green PR; GitHub deletes its branch. Main requires the passing check and resolved conversations, including for administrators, and blocks force pushes/deletion. A second reviewer and rebasing onto the latest main are not required. Actions tokens default to read. To recover, revert the offending squash commit through a tested PR. To redeploy unchanged source, manually run **Portfolio delivery** from main.
 
-See [delivery and recovery](docs/delivery.md) for manual redeploys, rollback, repository settings, and this infrastructure PR's one-time rollout.
+The repo uses the existing `AZURE_STATIC_WEB_APPS_API_TOKEN` Actions secret. Deployment is restricted to main by the workflow's step conditions. The previously configured main-only `production` environment remains available, but this single-job workflow does not attach to it. Routine dependency updates are grouped monthly with one open version-update PR per ecosystem; security alerts and security-update PRs remain enabled.
+
+Track work on the [repo project board](https://github.com/orgs/Spade-Software/projects/9). It uses native GitHub automation, not Actions. The board is private; repository issues are public.
 
 ## Google Analytics
 
-GA4 property: **EvanMHenry.com**. Public Measurement ID: `G-PDJXZKXXJM`. The private dashboard lives in [Google Analytics](https://analytics.google.com/).
-
-Actions variable `GA_MEASUREMENT_ID` supplies the production ID. `AZURE_STATIC_WEB_APPS_API_TOKEN` is the deployment secret. A Measurement ID is public and belongs in a variable, not a secret. Local/PR/Azure preview hosts do not collect analytics; visitors must allow it before the tag loads. Advertising features stay disabled. See [analytics verification](docs/analytics.md).
+GA4 property: **EvanMHenry.com**. Public Measurement ID: `G-PDJXZKXXJM`, stored in Actions variable `GA_MEASUREMENT_ID`. Main builds receive it; a missing/invalid value warns instead of blocking publishing. Tracking also requires an exact production host and visitor consent. Advertising stays disabled. The dashboard is private in Google Analytics. See [analytics verification](docs/analytics.md).
 
 ## Prototype skill
 
-The prototype skill comes from the current **BackOps** version, retaining the shared picker and Claude/Codex adapters. Read [.claude/skills/prototype/SKILL.md](.claude/skills/prototype/SKILL.md); invoke `/prototype` in Claude or `$prototype` in Codex. Output stays outside the repository. Codex uses direct queue delivery when supported, with manual resumption otherwise; there is no polling automation fallback. See [prototype portability](docs/prototype.md).
+The shared prototype skill comes from current BackOps and retains Claude/Codex adapters. Read [.claude/skills/prototype/SKILL.md](.claude/skills/prototype/SKILL.md); invoke `/prototype` in Claude or `$prototype` in Codex. It runs locally only when invoked and writes to external scratch space. Its [portfolio note](.claude/skills/prototype/PORTFOLIO.md) records the CSS adaptation. It does not consume Actions minutes.

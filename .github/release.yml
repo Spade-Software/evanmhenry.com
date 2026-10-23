@@ -1,6 +1,0 @@
-changelog:
-  exclude:
-    labels: [skip-changelog]
-  categories:
-    - title: Site updates
-      labels: ['*']

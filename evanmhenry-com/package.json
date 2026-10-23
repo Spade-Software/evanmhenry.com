@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/analytics.test.mjs ../scripts/tests/*.test.mjs",
+    "test": "node --experimental-strip-types --test tests/analytics.test.mjs",
     "test:export": "node --test tests/static-routes.test.mjs",
     "preview": "serve out"
   },

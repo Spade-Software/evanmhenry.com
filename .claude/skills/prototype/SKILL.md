@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Ported from BackOps. Keep the shared picker, immutable version format, server and host adapters compatible with upstream. This repo uses the portfolio CSS adapter instead of BackOps Tailwind/SpadeUI.
 
-Read `docs/content-and-design.md` for the product's real tokens, motion, copy and component choices. Read [PICKER.md](PICKER.md) before producing a picker page and [HOSTS.md](HOSTS.md) before starting feedback delivery. Use the invoking host: Claude's watcher or Codex's direct queue. Never replace Claude support with Codex-only behavior, use recurring polling in Codex, or claim a received submission was built.
+Read the root `AGENTS.md` for portfolio copy/design conventions and the app styles/components for actual tokens and class names. Read [PORTFOLIO.md](PORTFOLIO.md) for upstream and CSS-adapter details. Read [PICKER.md](PICKER.md) before producing a picker page and [HOSTS.md](HOSTS.md) before starting feedback delivery. Use the invoking host: Claude's watcher or Codex's direct queue. Never replace Claude support with Codex-only behavior, use recurring polling in Codex, or claim a received submission was built.
 
 ## Explore
 
