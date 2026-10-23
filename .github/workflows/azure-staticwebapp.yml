@@ -44,6 +44,8 @@ jobs:
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ github.ref == 'refs/heads/main' && vars.GA_MEASUREMENT_ID || '' }}
 
       - name: Deploy static export
+        # This branch already has a named preview; avoid consuming a second Azure staging slot for its PR.
+        if: github.event_name != 'pull_request' || github.head_ref != 'feat/version-2'
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -57,7 +59,7 @@ jobs:
 
   close_pull_request_job:
     name: Close pull request preview
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref != 'feat/version-2'
     runs-on: ubuntu-latest
     permissions:
       contents: none
