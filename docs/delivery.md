@@ -21,6 +21,8 @@ Repository policy is versioned in `.github/repository-policy.json`. `node script
 
 The delivery workflow and policy land in the same infrastructure PR. Wait for its new Validate site check to pass before requiring that check in main's protection. Apply policy once, confirm it through the GitHub API, and then merge this PR. The first main delivery creates the first artifact-based release; earlier deploys do not have this rollback format. Repository setting changes apply immediately; workflow/dependency/skill changes become the default only after merge.
 
+The policy was applied and read back successfully on October 23, 2026 after Validate site passed: head-branch deletion, squash-only merges, required app-bound CI with admin enforcement, main-only production access, read-default Actions permissions and Dependabot security PRs are active. The helper remains available to reconcile future drift; it is not a scheduled admin process.
+
 Actions are pinned and Dependabot checks npm/Actions weekly. Minor/patch npm updates are grouped; major changes need separate review. Dependency PRs use the same CI and merge path. Do not dismiss legacy security alerts solely to make the dashboard green; reconcile them against current lockfiles. The Azure action's vendor Docker image remains upstream-controlled even when the action commit is pinned.
 
 ## Recovery
